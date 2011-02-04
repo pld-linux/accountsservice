@@ -7,22 +7,26 @@ Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.bz2
 # Source0-md5:	3d61bffe2952472611e175b6fc637062
 URL:		http://cgit.freedesktop.org/accountsservice/
+BuildRequires:	autoconf
+BuildRequires:	automake
 BuildRequires:	dbus-glib-devel
+BuildRequires:	docbook-dtd412-xml
+BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	intltool >= 0.40.0
+BuildRequires:	libtool
 BuildRequires:	libxslt-progs
+BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel
 BuildRequires:	xmlto
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-The AccountsService project provides
-
- o  A set of D-Bus interfaces for querying and manipulating
-    user account information.
-
- o  An implementation of these interfaces based on the usermod(8),
-    useradd(8) and userdel(8) commands.
+The AccountsService project provides:
+- A set of D-Bus interfaces for querying and manipulating user account
+  information.
+- An implementation of these interfaces based on the usermod(8),
+  useradd(8) and userdel(8) commands.
 
 %package devel
 Summary:	accountsservice includes, and more
