@@ -20,6 +20,8 @@ BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel
 BuildRequires:	xmlto
+Requires:	ConsoleKit
+Requires:	polkit
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -96,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 /etc/dbus-1/system.d/org.freedesktop.Accounts.conf
 %{_datadir}/dbus-1/system-services/org.freedesktop.Accounts.service
 %{_datadir}/polkit-1/actions/org.freedesktop.accounts.policy
+%dir /var/lib/AccountsService
+%dir /var/lib/AccountsService/icons
+%dir /var/lib/AccountsService/users
 
 %files devel
 %defattr(644,root,root,755)
