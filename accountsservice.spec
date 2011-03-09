@@ -1,8 +1,8 @@
 Summary:	D-Bus interface for user accounts management
 Name:		accountsservice
 Version:	0.6.5
-Release:	0.1
-License:	LGPL
+Release:	1
+License:	GPL v3
 Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.bz2
 # Source0-md5:	81f5298e9c7c572f3cf6d88490a08743
@@ -13,6 +13,7 @@ BuildRequires:	dbus-glib-devel
 BuildRequires:	docbook-dtd412-xml
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.26.0
+BuildRequires:	gobject-introspection-devel >= 0.10.0
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libtool
 BuildRequires:	libxslt-progs
@@ -64,6 +65,7 @@ Statyczna biblioteka accountsservice.
 %{__automake}
 %configure \
 	XMLTO_FLAGS="--skip-validation" \
+	--disable-silent-rules \
 	--enable-docbook-docs
 %{__make}
 
@@ -87,22 +89,22 @@ rm -rf $RPM_BUILD_ROOT
 %files -f accounts-service.lang
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README TODO doc/dbus/AccountsService.html
-/etc/dbus-1/system.d/org.freedesktop.Accounts.conf
-%attr(755,root,root) %{_libdir}/accounts-daemon
-%{_libdir}/girepository-1.0/AccountsService-1.0.typelib
+%attr(755,root,root) %{_libexecdir}/accounts-daemon
+%attr(755,root,root) %{_libdir}/libaccountsservice.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libaccountsservice.so.0
-%attr(755,root,root) %{_libdir}/libaccountsservice.so.0.0.0
-%{_datadir}/dbus-1/interfaces/org.freedesktop.Accounts.User.xml
-%{_datadir}/dbus-1/interfaces/org.freedesktop.Accounts.xml
+%{_libdir}/girepository-1.0/AccountsService-1.0.typelib
+/etc/dbus-1/system.d/org.freedesktop.Accounts.conf
 %{_datadir}/dbus-1/system-services/org.freedesktop.Accounts.service
 %{_datadir}/polkit-1/actions/org.freedesktop.accounts.policy
 
 %files devel
 %defattr(644,root,root,755)
-%{_datadir}/gir-1.0/AccountsService-1.0.gir
-%{_pkgconfigdir}/accountsservice.pc
 %attr(755,root,root) %{_libdir}/libaccountsservice.so
 %{_includedir}/accountsservice-1.0
+%{_pkgconfigdir}/accountsservice.pc
+%{_datadir}/dbus-1/interfaces/org.freedesktop.Accounts.User.xml
+%{_datadir}/dbus-1/interfaces/org.freedesktop.Accounts.xml
+%{_datadir}/gir-1.0/AccountsService-1.0.gir
 
 %files static
 %defattr(644,root,root,755)
