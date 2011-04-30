@@ -1,11 +1,12 @@
 Summary:	D-Bus interface for user accounts management
+Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.9
+Version:	0.6.10
 Release:	1
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.bz2
-# Source0-md5:	e21a311d11089386eaf7d738f7bca222
+# Source0-md5:	e43d0ea4c0cb9291e60f800d9c2d0ba4
 URL:		http://cgit.freedesktop.org/accountsservice/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -30,6 +31,13 @@ The AccountsService project provides:
   information.
 - An implementation of these interfaces based on the usermod(8),
   useradd(8) and userdel(8) commands.
+
+%description -l pl.UTF-8
+Projekt AccountsService dostarcza:
+- Zbiór interfejsów D-Bus do odpytywania i manipulowania informacjami
+  o kontach użytkowników.
+- Implementacje tych interfejsów oparte o komendy usermod(8),
+  useradd(8) i userdel(8).
 
 %package devel
 Summary:	accountsservice includes, and more
