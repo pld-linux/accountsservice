@@ -2,7 +2,7 @@ Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
 Version:	0.6.15
-Release:	1
+Release:	2
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.bz2
@@ -20,6 +20,7 @@ BuildRequires:	libtool
 BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
+BuildRequires:	rpmbuild(macros) >= 1.623
 BuildRequires:	xmlto
 Requires:	ConsoleKit
 Requires:	polkit >= 0.102
@@ -38,6 +39,15 @@ Projekt AccountsService dostarcza:
   o kontach użytkowników.
 - Implementacje tych interfejsów oparte o komendy usermod(8),
   useradd(8) i userdel(8).
+
+%package systemd
+Summary:	systemd unit for accountsservice
+Group:		Daemons
+Requires:	%{name} = %{version}-%{release}
+Requires:	systemd-units
+
+%description systemd
+systemd unit for accountsservice.
 
 %package devel
 Summary:	accountsservice includes, and more
@@ -76,6 +86,7 @@ Statyczna biblioteka accountsservice.
 %configure \
 	XMLTO_FLAGS="--skip-validation" \
 	--disable-silent-rules \
+	--with-systemdsystemunitdir=%{systemdunitdir} \
 	--enable-docbook-docs
 %{__make}
 
@@ -96,6 +107,16 @@ rm -rf $RPM_BUILD_ROOT
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
+%post systemd
+%systemd_post
+%systemd_enable accounts-daemon.service
+
+%preun systemd
+%systemd_preun accounts-daemon.service
+
+%postun systemd
+%systemd_postun accounts-daemon.service
+
 %files -f accounts-service.lang
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README TODO doc/dbus/AccountsService.html
@@ -109,6 +130,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir /var/lib/AccountsService
 %dir /var/lib/AccountsService/icons
 %dir /var/lib/AccountsService/users
+
+%files systemd
+%defattr(644,root,root,755)
+%{systemdunitdir}/accounts-daemon.service
 
 %files devel
 %defattr(644,root,root,755)
