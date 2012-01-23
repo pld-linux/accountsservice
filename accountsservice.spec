@@ -2,7 +2,7 @@ Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
 Version:	0.6.15
-Release:	3
+Release:	4
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.bz2
@@ -20,7 +20,7 @@ BuildRequires:	libtool
 BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
-BuildRequires:	rpmbuild(macros) >= 1.626
+BuildRequires:	rpmbuild(macros) >= 1.629
 BuildRequires:	xmlto
 Requires:	ConsoleKit
 Requires:	polkit >= 0.102
