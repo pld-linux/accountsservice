@@ -2,7 +2,7 @@ Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
 Version:	0.6.15
-Release:	4
+Release:	5
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.bz2
@@ -20,10 +20,11 @@ BuildRequires:	libtool
 BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
-BuildRequires:	rpmbuild(macros) >= 1.629
+BuildRequires:	rpmbuild(macros) >= 1.641
 BuildRequires:	xmlto
 Requires:	ConsoleKit
 Requires:	polkit >= 0.102
+Requires:	systemd-units >= 0.38
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -39,15 +40,6 @@ Projekt AccountsService dostarcza:
   o kontach użytkowników.
 - Implementacje tych interfejsów oparte o komendy usermod(8),
   useradd(8) i userdel(8).
-
-%package systemd
-Summary:	systemd unit for accountsservice
-Group:		Daemons
-Requires:	%{name} = %{version}-%{release}
-Requires:	systemd-units
-
-%description systemd
-systemd unit for accountsservice.
 
 %package devel
 Summary:	accountsservice includes, and more
@@ -107,14 +99,17 @@ rm -rf $RPM_BUILD_ROOT
 %post   -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%post systemd
+%post
 %systemd_post accounts-daemon.service
 
-%preun systemd
+%preun
 %systemd_preun accounts-daemon.service
 
-%postun systemd
+%postun
 %systemd_reload
+
+%triggerpostun -- accountsservice < 0.6.15-5
+%systemd_trigger accounts-daemon.service
 
 %files -f accounts-service.lang
 %defattr(644,root,root,755)
@@ -124,15 +119,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/libaccountsservice.so.0
 %{_libdir}/girepository-1.0/AccountsService-1.0.typelib
 /etc/dbus-1/system.d/org.freedesktop.Accounts.conf
+%{systemdunitdir}/accounts-daemon.service
 %{_datadir}/dbus-1/system-services/org.freedesktop.Accounts.service
 %{_datadir}/polkit-1/actions/org.freedesktop.accounts.policy
 %dir /var/lib/AccountsService
 %dir /var/lib/AccountsService/icons
 %dir /var/lib/AccountsService/users
-
-%files systemd
-%defattr(644,root,root,755)
-%{systemdunitdir}/accounts-daemon.service
 
 %files devel
 %defattr(644,root,root,755)
