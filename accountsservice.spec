@@ -96,16 +96,15 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post   -p /sbin/ldconfig
-%postun -p /sbin/ldconfig
-
 %post
+/sbin/ldconfig
 %systemd_post accounts-daemon.service
 
 %preun
 %systemd_preun accounts-daemon.service
 
 %postun
+/sbin/ldconfig
 %systemd_reload
 
 %triggerpostun -- accountsservice < 0.6.15-5
