@@ -1,12 +1,12 @@
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.15
-Release:	6
+Version:	0.6.17
+Release:	1
 License:	GPL v3
 Group:		Applications/System
-Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.bz2
-# Source0-md5:	939e58e57334801ca578b182a09141c4
+Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.xz
+# Source0-md5:	684ee758685fe9af4f579023172246c5
 URL:		http://cgit.freedesktop.org/accountsservice/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -21,10 +21,13 @@ BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
 BuildRequires:	rpmbuild(macros) >= 1.641
+BuildRequires:	systemd-devel
+BuildRequires:	tar >= 1:1.22
 BuildRequires:	xmlto
-Requires:	ConsoleKit
+BuildRequires:	xz
 Requires:	polkit >= 0.102
 Requires:	systemd-units >= 0.38
+Suggests:	ConsoleKit
 Obsoletes:	accountsservice-systemd
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -65,6 +68,18 @@ accountsservice static library.
 
 %description static -l pl.UTF-8
 Statyczna biblioteka accountsservice.
+
+%package -n vala-accountsservice
+Summary:	accountsservice API for Vala language
+Summary(pl.UTF-8):	API accountsservice dla języka Vala
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+
+%description -n vala-accountsservice
+accountsservice API for Vala language.
+
+%description -n vala-accountsservice -l pl.UTF-8
+API accountsservice dla języka Vala.
 
 %prep
 %setup -q
@@ -138,3 +153,8 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libaccountsservice.a
+
+%files -n vala-accountsservice
+%defattr(644,root,root,755)
+%{_datadir}/vala/vapi/accountsservice.deps
+%{_datadir}/vala/vapi/accountsservice.vapi
