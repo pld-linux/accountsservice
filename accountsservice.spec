@@ -1,12 +1,12 @@
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.26
+Version:	0.6.29
 Release:	1
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.xz
-# Source0-md5:	ff6b5c318b065e7eb3514d8653b9aa1c
+# Source0-md5:	af6c309935b697d0cb8f7af66a088518
 URL:		http://cgit.freedesktop.org/accountsservice/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -15,6 +15,7 @@ BuildRequires:	docbook-dtd412-xml
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel >= 1:2.26.0
 BuildRequires:	gobject-introspection-devel >= 0.10.0
+BuildRequires:	gtk-doc >= 1.15
 BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libtool
 BuildRequires:	libxslt-progs
@@ -88,6 +89,7 @@ API accountsservice dla języka Vala.
 %build
 %{__intltoolize}
 %{__libtoolize}
+%{__gtkdocize}
 %{__aclocal}
 %{__autoconf}
 %{__autoheader}
