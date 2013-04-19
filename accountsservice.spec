@@ -1,12 +1,12 @@
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.30
+Version:	0.6.31
 Release:	1
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.xz
-# Source0-md5:	5138639710cc0b4a00764439f580f60c
+# Source0-md5:	0b47d4f0cd512e7cbf346c9589984ca2
 URL:		http://cgit.freedesktop.org/accountsservice/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -98,7 +98,8 @@ API accountsservice dla języka Vala.
 	XMLTO_FLAGS="--skip-validation" \
 	--disable-silent-rules \
 	--with-systemdsystemunitdir=%{systemdunitdir} \
-	--enable-docbook-docs
+	--enable-docbook-docs \
+	--enable-admin-group=wheel
 %{__make}
 
 %install
