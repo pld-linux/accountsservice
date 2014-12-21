@@ -1,14 +1,14 @@
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.37
+Version:	0.6.39
 Release:	1
 License:	GPL v3
 Group:		Applications/System
-Source0:	http://cgit.freedesktop.org/accountsservice/snapshot/%{name}-%{version}.tar.xz
-# Source0-md5:	d4842f2a054459746947f85476144077
+Source0:	http://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
+# Source0-md5:	7c4ad675547ff05d650c1a3acdbfd063
 URL:		http://cgit.freedesktop.org/accountsservice/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	dbus-glib-devel
 BuildRequires:	docbook-dtd412-xml
@@ -17,7 +17,7 @@ BuildRequires:	glib2-devel >= 1:2.38.0
 BuildRequires:	gobject-introspection-devel >= 0.10.0
 BuildRequires:	gtk-doc >= 1.15
 BuildRequires:	intltool >= 0.40.0
-BuildRequires:	libtool
+BuildRequires:	libtool >= 2:2
 BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
@@ -27,6 +27,7 @@ BuildRequires:	tar >= 1:1.22
 BuildRequires:	xmlto
 BuildRequires:	xz
 Requires(post,preun,postun):	systemd-units >= 38
+Requires:	%{name}-libs = %{version}-%{release}
 Requires:	polkit >= 0.102
 Requires:	systemd-units >= 0.38
 Suggests:	ConsoleKit
@@ -48,17 +49,33 @@ Projekt AccountsService dostarcza:
 - Implementacje tych interfejsów oparte o komendy usermod(8),
   useradd(8) i userdel(8).
 
+%package libs
+Summary:	Shared accountsservice library
+Summary(pl.UTF-8):	Biblioteka współdzielona accountsservice
+Group:		Libraries
+Requires:	glib2 >= 1:2.38.0
+Conflicts:	accountsservice < 0.6.39
+
+%description libs
+Shared accountsservice library.
+
+%description libs -l pl.UTF-8
+Biblioteka współdzielona accountsservice.
+
 %package devel
-Summary:	accountsservice includes, and more
-Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki accountsservice
+Summary:	Development files for accountsservice
+Summary(pl.UTF-8):	Pliki programistyczne biblioteki accountsservice
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}-libs = %{version}-%{release}
+Requires:	glib2-devel >= 1:2.38.0
 
 %description devel
-accountsservice includes, and more
+Development files for accountsservice (headers, GObject API, D-Bus
+interface description).
 
 %description devel -l pl.UTF-8
-Pliki nagłówkowe biblioteki accountsservice.
+Pliki programistyczne biblioteki accountsservice (pliki nagłówkowe,
+API GObject, opis interfejsu D-Bus).
 
 %package static
 Summary:	accountsservice static library
@@ -72,6 +89,18 @@ accountsservice static library.
 %description static -l pl.UTF-8
 Statyczna biblioteka accountsservice.
 
+%package apidocs
+Summary:	API documentation for accountsservice
+Summary(pl.UTF-8):	Dokumentacja API accountsservice
+Group:		Documentation
+Requires:	gtk-doc-common
+
+%description apidocs
+API documentation for accountsservice.
+
+%description apidocs -l pl.UTF-8
+Dokumentacja API accountsservice.
+
 %prep
 %setup -q
 
@@ -79,16 +108,17 @@ Statyczna biblioteka accountsservice.
 %{__intltoolize}
 %{__libtoolize}
 %{__gtkdocize}
-%{__aclocal}
+%{__aclocal} -I m4
 %{__autoconf}
 %{__autoheader}
 %{__automake}
 %configure \
 	XMLTO_FLAGS="--skip-validation" \
-	--disable-silent-rules \
-	--with-systemdsystemunitdir=%{systemdunitdir} \
+	--enable-admin-group=wheel \
 	--enable-docbook-docs \
-	--enable-admin-group=wheel
+	--disable-silent-rules \
+	--with-html-dir=%{_gtkdocdir} \
+	--with-systemdsystemunitdir=%{systemdunitdir}
 %{__make}
 
 %install
@@ -100,32 +130,33 @@ rm -rf $RPM_BUILD_ROOT
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/libaccountsservice.la
 %{__rm} $RPM_BUILD_ROOT%{_docdir}/accountsservice/spec/AccountsService.html
 
+%{__mv} $RPM_BUILD_ROOT%{_localedir}/{bg_BG,bg}
+%{__mv} $RPM_BUILD_ROOT%{_localedir}/{fa_IR,fa}
+
 %find_lang accounts-service
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/ldconfig
 %systemd_post accounts-daemon.service
 
 %preun
 %systemd_preun accounts-daemon.service
 
 %postun
-/sbin/ldconfig
 %systemd_reload
 
 %triggerpostun -- accountsservice < 0.6.15-5
 %systemd_trigger accounts-daemon.service
 
+%post	libs -p /sbin/ldconfig
+%postun	libs -p /sbin/ldconfig
+
 %files -f accounts-service.lang
 %defattr(644,root,root,755)
 %doc AUTHORS NEWS README TODO doc/dbus/AccountsService.html
 %attr(755,root,root) %{_libexecdir}/accounts-daemon
-%attr(755,root,root) %{_libdir}/libaccountsservice.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libaccountsservice.so.0
-%{_libdir}/girepository-1.0/AccountsService-1.0.typelib
 /etc/dbus-1/system.d/org.freedesktop.Accounts.conf
 %{systemdunitdir}/accounts-daemon.service
 %{_datadir}/dbus-1/system-services/org.freedesktop.Accounts.service
@@ -133,6 +164,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir /var/lib/AccountsService
 %dir /var/lib/AccountsService/icons
 %dir /var/lib/AccountsService/users
+
+%files libs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libaccountsservice.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libaccountsservice.so.0
+%{_libdir}/girepository-1.0/AccountsService-1.0.typelib
 
 %files devel
 %defattr(644,root,root,755)
@@ -146,3 +183,7 @@ rm -rf $RPM_BUILD_ROOT
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libaccountsservice.a
+
+%files apidocs
+%defattr(644,root,root,755)
+%{_gtkdocdir}/libaccountsservice
