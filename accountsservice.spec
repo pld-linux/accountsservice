@@ -1,12 +1,12 @@
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.39
+Version:	0.6.40
 Release:	1
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
-# Source0-md5:	7c4ad675547ff05d650c1a3acdbfd063
+# Source0-md5:	8b21fe2fbb2b0cf1ba8329596898b203
 URL:		http://cgit.freedesktop.org/accountsservice/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
