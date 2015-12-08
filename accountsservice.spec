@@ -2,7 +2,7 @@ Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
 Version:	0.6.40
-Release:	2
+Release:	3
 License:	GPL v3
 Group:		Applications/System
 Source0:	http://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
@@ -94,6 +94,9 @@ Summary:	API documentation for accountsservice
 Summary(pl.UTF-8):	Dokumentacja API accountsservice
 Group:		Documentation
 Requires:	gtk-doc-common
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description apidocs
 API documentation for accountsservice.
