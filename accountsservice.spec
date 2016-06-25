@@ -1,13 +1,13 @@
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.40
-Release:	3
-License:	GPL v3
+Version:	0.6.42
+Release:	1
+License:	GPL v3+
 Group:		Applications/System
-Source0:	http://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
-# Source0-md5:	8b21fe2fbb2b0cf1ba8329596898b203
-URL:		http://cgit.freedesktop.org/accountsservice/
+Source0:	https://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
+# Source0-md5:	77a38325c82effa976cc1a03fbcd5117
+URL:		https://cgit.freedesktop.org/accountsservice/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	dbus-glib-devel
@@ -22,11 +22,11 @@ BuildRequires:	libxslt-progs
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
 BuildRequires:	rpmbuild(macros) >= 1.641
-BuildRequires:	systemd-devel >= 186
+BuildRequires:	systemd-devel >= 1:186
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xmlto
 BuildRequires:	xz
-Requires(post,preun,postun):	systemd-units >= 38
+Requires(post,preun,postun):	systemd-units >= 1:186
 Requires:	%{name}-libs = %{version}-%{release}
 Requires:	polkit >= 0.102
 Requires:	systemd-units >= 0.38
@@ -54,6 +54,7 @@ Summary:	Shared accountsservice library
 Summary(pl.UTF-8):	Biblioteka współdzielona accountsservice
 Group:		Libraries
 Requires:	glib2 >= 1:2.38.0
+Requires:	systemd-libs >= 1:186
 Conflicts:	accountsservice < 0.6.39
 
 %description libs
