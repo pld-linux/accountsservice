@@ -2,7 +2,7 @@ Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
 Version:	0.6.45
-Release:	1
+Release:	2
 License:	GPL v3+
 Group:		Applications/System
 Source0:	https://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
@@ -128,6 +128,8 @@ Dokumentacja API accountsservice.
 %install
 rm -rf $RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT%{_datadir}/accountsservice/interfaces
+
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
@@ -163,6 +165,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libexecdir}/accounts-daemon
 /etc/dbus-1/system.d/org.freedesktop.Accounts.conf
 %{systemdunitdir}/accounts-daemon.service
+%dir %{_datadir}/accountsservice
+%dir %{_datadir}/accountsservice/interfaces
 %{_datadir}/dbus-1/system-services/org.freedesktop.Accounts.service
 %{_datadir}/polkit-1/actions/org.freedesktop.accounts.policy
 %dir /var/lib/AccountsService
