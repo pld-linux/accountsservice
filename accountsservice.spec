@@ -1,28 +1,36 @@
+#
+# Conditional build:
+%bcond_with	elogind		# elogind support (instead of systemd)
+%bcond_without	systemd		# systemd support
+%bcond_without	static_libs	# static library
+
+%if %{with elogind}
+%undefine	with_systemd
+%endif
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.50
+Version:	0.6.54
 Release:	1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	https://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
-# Source0-md5:	459b2882745da42647b4da2e22c9d1f8
+# Source0-md5:	6420f2e619ddcf92230d8f10bad049fe
 URL:		https://cgit.freedesktop.org/accountsservice/
-BuildRequires:	autoconf >= 2.50
-BuildRequires:	automake
-BuildRequires:	dbus-glib-devel
 BuildRequires:	docbook-dtd412-xml
+%{?with_elogind:BuildRequires:	elogind-devel >= 229.4}
 BuildRequires:	gettext-tools
-BuildRequires:	glib2-devel >= 1:2.38.0
+BuildRequires:	glib2-devel >= 1:2.44
 BuildRequires:	gobject-introspection-devel >= 0.10.0
 BuildRequires:	gtk-doc >= 1.15
-BuildRequires:	intltool >= 0.40.0
-BuildRequires:	libtool >= 2:2
 BuildRequires:	libxslt-progs
+BuildRequires:	meson >= 0.46.0
+BuildRequires:	ninja
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
 BuildRequires:	rpmbuild(macros) >= 1.641
-BuildRequires:	systemd-devel >= 1:186
+BuildRequires:	sed >= 4.0
+%{?with_systemd:BuildRequires:	systemd-devel >= 1:186}
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xmlto
 BuildRequires:	xz
@@ -53,7 +61,7 @@ Projekt AccountsService dostarcza:
 Summary:	Shared accountsservice library
 Summary(pl.UTF-8):	Biblioteka współdzielona accountsservice
 Group:		Libraries
-Requires:	glib2 >= 1:2.38.0
+Requires:	glib2 >= 1:2.44
 Requires:	systemd-libs >= 1:186
 Conflicts:	accountsservice < 0.6.39
 
@@ -68,7 +76,7 @@ Summary:	Development files for accountsservice
 Summary(pl.UTF-8):	Pliki programistyczne biblioteki accountsservice
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.38.0
+Requires:	glib2-devel >= 1:2.44
 
 %description devel
 Development files for accountsservice (headers, GObject API, D-Bus
@@ -108,32 +116,27 @@ Dokumentacja API accountsservice.
 %prep
 %setup -q
 
+%if %{with static_libs}
+%{__sed} -i -e 's/shared_library/library/' src/libaccountsservice/meson.build
+%endif
+
 %build
-%{__intltoolize}
-%{__libtoolize}
-%{__gtkdocize}
-%{__aclocal} -I m4
-%{__autoconf}
-%{__autoheader}
-%{__automake}
-%configure \
-	XMLTO_FLAGS="--skip-validation" \
-	--enable-admin-group=wheel \
-	--enable-docbook-docs \
-	--disable-silent-rules \
-	--with-html-dir=%{_gtkdocdir} \
-	--with-systemdsystemunitdir=%{systemdunitdir}
-%{__make}
+%meson build \
+	-Dadmin_group=wheel \
+	-Ddocbook=true \
+	%{?with_elogind:-Delogind=true} \
+	-Dgtk_doc=true \
+	%{?with_systemd:-Dsystemd=true} \
+	-Dsystemdsystemunitdir=%{systemdunitdir} \
+
+%meson_build -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
 install -d $RPM_BUILD_ROOT%{_datadir}/accountsservice/interfaces
 
-%{__make} install \
-	DESTDIR=$RPM_BUILD_ROOT
+%meson_install -C build
 
-%{__rm} $RPM_BUILD_ROOT%{_libdir}/libaccountsservice.la
 %{__rm} $RPM_BUILD_ROOT%{_docdir}/accountsservice/spec/AccountsService.html
 
 %find_lang accounts-service
@@ -158,7 +161,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f accounts-service.lang
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS README TODO doc/dbus/AccountsService.html
+%doc AUTHORS NEWS README.md TODO build/doc/dbus/AccountsService.html
 %attr(755,root,root) %{_libexecdir}/accounts-daemon
 /etc/dbus-1/system.d/org.freedesktop.Accounts.conf
 %{systemdunitdir}/accounts-daemon.service
@@ -185,9 +188,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/dbus-1/interfaces/org.freedesktop.Accounts.xml
 %{_datadir}/gir-1.0/AccountsService-1.0.gir
 
+%if %{with static_libs}
 %files static
 %defattr(644,root,root,755)
 %{_libdir}/libaccountsservice.a
+%endif
 
 %files apidocs
 %defattr(644,root,root,755)
