@@ -103,9 +103,7 @@ Summary:	API documentation for accountsservice
 Summary(pl.UTF-8):	Dokumentacja API accountsservice
 Group:		Documentation
 Requires:	gtk-doc-common
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description apidocs
 API documentation for accountsservice.
