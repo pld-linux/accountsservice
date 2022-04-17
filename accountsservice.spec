@@ -10,37 +10,40 @@
 Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
-Version:	0.6.55
+Version:	22.08.8
 Release:	1
 License:	GPL v3+
 Group:		Applications/System
 Source0:	https://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
-# Source0-md5:	6e4c6fbd490260cfe17de2e76f5d803a
+# Source0-md5:	6dae0b50b48abe61296c8ecf90068c1f
 URL:		https://cgit.freedesktop.org/accountsservice/
+BuildRequires:	dbus-devel >= 1.9.18
 BuildRequires:	docbook-dtd412-xml
 %{?with_elogind:BuildRequires:	elogind-devel >= 229.4}
 BuildRequires:	gettext-tools
-BuildRequires:	glib2-devel >= 1:2.44
+BuildRequires:	glib2-devel >= 1:2.63.5
 BuildRequires:	gobject-introspection-devel >= 0.10.0
 BuildRequires:	gtk-doc >= 1.15
+BuildRequires:	libxcrypt-devel >= 4
 BuildRequires:	libxslt-progs
-BuildRequires:	meson >= 0.46.0
+BuildRequires:	meson >= 0.50.0
 BuildRequires:	ninja
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel >= 0.102
-BuildRequires:	rpmbuild(macros) >= 1.641
+BuildRequires:	rpm-build >= 4.6
+BuildRequires:	rpmbuild(macros) >= 1.736
 BuildRequires:	sed >= 4.0
-%{?with_systemd:BuildRequires:	systemd-devel >= 1:186}
+%{?with_systemd:BuildRequires:	systemd-devel >= 1:209}
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xmlto
 BuildRequires:	xz
 Requires(post,preun,postun):	systemd-units >= 1:186
 Requires:	%{name}-libs = %{version}-%{release}
+Requires:	dbus >= 1.9.18
 Requires:	polkit >= 0.102
 Requires:	systemd-units >= 0.38
 Suggests:	ConsoleKit
-Obsoletes:	accountsservice-systemd
-Obsoletes:	vala-accountsservice
+Obsoletes:	accountsservice-systemd < 0.6.15-5
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -61,7 +64,8 @@ Projekt AccountsService dostarcza:
 Summary:	Shared accountsservice library
 Summary(pl.UTF-8):	Biblioteka współdzielona accountsservice
 Group:		Libraries
-Requires:	glib2 >= 1:2.44
+Requires:	glib2 >= 1:2.63.5
+Requires:	libxcrypt >= 4
 Requires:	systemd-libs >= 1:186
 Conflicts:	accountsservice < 0.6.39
 
@@ -76,7 +80,7 @@ Summary:	Development files for accountsservice
 Summary(pl.UTF-8):	Pliki programistyczne biblioteki accountsservice
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
-Requires:	glib2-devel >= 1:2.44
+Requires:	glib2-devel >= 1:2.63.5
 
 %description devel
 Development files for accountsservice (headers, GObject API, D-Bus
@@ -97,6 +101,19 @@ accountsservice static library.
 
 %description static -l pl.UTF-8
 Statyczna biblioteka accountsservice.
+
+%package -n vala-accountsservice
+Summary:	accountsservice API for Vala language
+Summary(pl.UTF-8):	API accountsservice dla języka Vala
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	vala
+
+%description -n vala-accountsservice
+accountsservice API for Vala language.
+
+%description -n vala-accountsservice -l pl.UTF-8
+API accountsservice dla języka Vala.
 
 %package apidocs
 Summary:	API documentation for accountsservice
@@ -124,16 +141,15 @@ Dokumentacja API accountsservice.
 	-Ddocbook=true \
 	%{?with_elogind:-Delogind=true} \
 	-Dgtk_doc=true \
-	%{?with_systemd:-Dsystemd=true} \
-	-Dsystemdsystemunitdir=%{systemdunitdir} \
+	-Dsystemdsystemunitdir=%{systemdunitdir}
 
-%meson_build -C build
+%ninja_build -C build
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_datadir}/accountsservice/interfaces
 
-%meson_install -C build
+%ninja_install -C build
 
 %{__rm} $RPM_BUILD_ROOT%{_docdir}/accountsservice/spec/AccountsService.html
 
@@ -159,12 +175,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -f accounts-service.lang
 %defattr(644,root,root,755)
-%doc AUTHORS NEWS README.md TODO build/doc/dbus/AccountsService.html
+%doc AUTHORS README.md TODO build/doc/dbus/AccountsService.html
 %attr(755,root,root) %{_libexecdir}/accounts-daemon
-/etc/dbus-1/system.d/org.freedesktop.Accounts.conf
 %{systemdunitdir}/accounts-daemon.service
 %dir %{_datadir}/accountsservice
 %dir %{_datadir}/accountsservice/interfaces
+%{_datadir}/accountsservice/user-templates
+%{_datadir}/dbus-1/system.d/org.freedesktop.Accounts.conf
 %{_datadir}/dbus-1/system-services/org.freedesktop.Accounts.service
 %{_datadir}/polkit-1/actions/org.freedesktop.accounts.policy
 %dir /var/lib/AccountsService
@@ -191,6 +208,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libaccountsservice.a
 %endif
+
+%files -n vala-accountsservice
+%defattr(644,root,root,755)
+%{_datadir}/vala/vapi/accountsservice.deps
+%{_datadir}/vala/vapi/accountsservice.vapi
 
 %files apidocs
 %defattr(644,root,root,755)
