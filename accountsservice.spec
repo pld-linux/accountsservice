@@ -11,7 +11,7 @@ Summary:	D-Bus interface for user accounts management
 Summary(pl.UTF-8):	Interfejs D-Bus do zarządzania kontami użytkowników
 Name:		accountsservice
 Version:	22.08.8
-Release:	1
+Release:	2
 License:	GPL v3+
 Group:		Applications/System
 Source0:	https://www.freedesktop.org/software/accountsservice/%{name}-%{version}.tar.xz
@@ -130,6 +130,9 @@ Dokumentacja API accountsservice.
 
 %prep
 %setup -q
+
+# too hacky, works with bash or pdksh, but not with mksh; override version in hard way
+%{__sed} -i -e '2a echo "%{version}" ; exit 0' generate-version.sh
 
 %if %{with static_libs}
 %{__sed} -i -e 's/shared_library/library/' src/libaccountsservice/meson.build
