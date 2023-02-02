@@ -35,6 +35,7 @@ BuildRequires:	rpmbuild(macros) >= 1.736
 BuildRequires:	sed >= 4.0
 %{?with_systemd:BuildRequires:	systemd-devel >= 1:209}
 BuildRequires:	tar >= 1:1.22
+BuildRequires:	vala
 BuildRequires:	xmlto
 BuildRequires:	xz
 Requires(post,preun,postun):	systemd-units >= 1:186
